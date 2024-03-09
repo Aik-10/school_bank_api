@@ -10,6 +10,7 @@ declare global {
             REDIS_PORT: string | undefined;
 
             MYSQL_POOL_CONNECTION: string;
+            DB_AUTH: string;
         }
     }
 }

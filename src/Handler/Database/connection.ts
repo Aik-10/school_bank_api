@@ -1,7 +1,7 @@
 import { sleep } from '../../Utils/sleep';
-import { createPool, Pool, PoolConnection, RowDataPacket } from 'mysql2/promise';
+import sql, { ConnectionPool } from 'mssql';
 
-export let pool: Pool;
+export let pool: ConnectionPool;
 export let isServerConnected = false;
 export let dbVersion = '';
 
@@ -11,43 +11,38 @@ export async function waitForConnection() {
     }
 }
 
-const activeConnections: Record<string, PoolConnection> = {};
+const activeConnections: Record<string, any> = {}; // Use 'any' type for the connection object
 
 export async function createConnectionPool() {
     try {
-        pool = createPool(process.env.MYSQL_POOL_CONNECTION);
+        pool = await new sql.ConnectionPool(process.env.DB_AUTH).connect();
 
-        pool.on('acquire', (conn) => {
-            const connectionId: number = (conn as any).connectionId;
-            activeConnections[connectionId] = conn;
+        pool.on('error', err => {
+            console.error(err);
         });
 
-        pool.on('release', (conn) => {
-            const connectionId: number = (conn as any).connectionId;
-            delete activeConnections[connectionId];
-        });
+        console.log('Database server connection established!');
+        isServerConnected = true;
 
-        const connection = await pool.getConnection();
-        const [result] = await (<Promise<RowDataPacket[]>>connection.query('SELECT VERSION() as version'));
-        if (result) {
-            dbVersion = `[${result[0].version}]`;
+        const request = pool.request();
+        const result = await request.query('SELECT @@VERSION as version');
+
+        if (result.recordset.length > 0) {
+            dbVersion = `[${result.recordset[0].version}]`;
         }
 
-        connection.release();
         console.log(`${dbVersion} Database server connection established!`);
-
-        isServerConnected = true;
     } catch (err: any) {
         isServerConnected = false;
 
-        console.log(
+        console.error(
             `Unable to establish a connection to the database (${err.code})!\nError ${err.errno}: ${err.message}`
         );
     }
 }
 
-export async function getPoolConnection(id?: number) {
+export async function getPoolConnection(id?: string) {
     if (!isServerConnected) await waitForConnection();
 
-    return id ? activeConnections[id] : pool.getConnection();
+    return id ? activeConnections[id] : pool.request();
 }
