@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "This project is a school assignment developed using Node.js, and it is released under the Mozilla Public License 2.0 (MPL 2.0). The MPL 2.0 license allows for the free use, modification, and distribution of the software.",
   "scripts": {
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
     "start": "node dist/index.js",
     "build": "tsc -b",
     "ts:watch": "tsc --watch",
