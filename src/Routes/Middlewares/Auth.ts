@@ -10,7 +10,8 @@ export const Authenticate = async (request: HttpRequest, context: InvocationCont
         body: 'Unauthorized'
     }
 
-    const verify = jwt.verify(token, process.env.API_JWT_TOKEN, (err: any, user?: AuthToken) => {
+    // Idiot solutions type any
+    const verify: any = jwt.verify(token, process.env.API_JWT_TOKEN, async(err: any, user?: AuthToken) => {
         if (err) return {
             status: 404,
             body: err

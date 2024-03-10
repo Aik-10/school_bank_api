@@ -22,10 +22,10 @@ export const AuthRegisterRoute = async (request: HttpRequest): Promise<HttpRespo
         const passHash = await passManager.hashPasswordString();
 
         if (!passHash) {
-            console.log("Password is shit")
+            console.log("Password hashing get some error, please try again new password")
             return {
                 status: 400,
-                body: "Password is shit",
+                body: "Password hashing get some error, please try again new password",
             };
         }
 

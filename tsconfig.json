@@ -21,7 +21,7 @@
     "paths": {
       "@/services/*": ["./src/Services/*"],
       "@/handler/*": ["./src/Handler/*"],
-      "@/routes/*": ["./src/Routes/*"],
+      "@/Routes/*": ["./src/Routes/*"],
       "@/Utils/*": ["./src/Utils/*"],
       "@/*": ["./src/*"]
     }

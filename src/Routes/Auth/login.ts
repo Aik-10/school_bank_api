@@ -33,21 +33,21 @@ export const AuthLoginRoute = async (request: HttpRequest, context: InvocationCo
         const personId = await getPersonIdEmail(user);
 
         const token = await jwt.sign(
-            { _id: personId, email: user.email }, process.env.API_JWT_TOKEN, { expiresIn: "1d" }
+            { _id: personId, email: user.email }, process.env.API_JWT_TOKEN, { expiresIn: "30min" }
         );
 
         console.log("New login with data", {
             user: personId,
             email: user.email
-        })
+        });
 
         return {
             status: 200,
-            body: JSON.stringify({
+            jsonBody: {
                 success: true,
                 message: "Login success",
                 token: token,
-            })
+            }
         }
     } catch (err: any) {
         console.error(err)

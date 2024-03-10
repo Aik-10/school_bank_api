@@ -1,1 +1,0 @@
-export const log = (...args): void => console.log(args); 
