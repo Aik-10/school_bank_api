@@ -1,6 +1,15 @@
 ## This is WIP 
 
-http://localhost:3000/health
-http://localhost:3000/auth/login
-http://localhost:3000/auth/register
+## Auth
+- http://localhost:3000/auth/login 
+- http://localhost:3000/auth/register
+- http://localhost:3000/auth/test
 
+## User things
+- http://localhost:3000/user
+  - Give person information
+  
+- http://localhost:3000/user/accounts
+  - List of user accounts
+
+- http://localhost:3000/user/accounts/$id/transactions?limit=&offset=

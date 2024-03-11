@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { HttpRequest, InvocationContext, HttpResponseInit } from "@azure/functions";
 
-export const Authenticate = async (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit | { status: true, AuthToken }> => {
+export const Authenticate = async (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit | { status: true, user: AuthToken }> => {
     const authHeader = await request.headers.get('authorization');
     const token = authHeader && authHeader.split(' ')[1]
 
