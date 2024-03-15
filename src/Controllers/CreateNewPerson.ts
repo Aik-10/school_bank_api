@@ -27,7 +27,7 @@ export const CreateNewUser = async ({ lastname, firstname, email, password }: Pe
         const customers = await createCustomerRow({ userId: User });
 
         return {
-            lastname, firstname, email, customerId: customers
+            lastname, firstname, email, customerId: customers, userId: User
         }
     } catch (err: any) {
         console.error(err);
@@ -39,13 +39,9 @@ const createCustomerRow = async ({ userId }: CreateCustomerRowProps): Promise<nu
     const poolConnection = await getPoolConnection();
     const result = await poolConnection
         .input('userId', Int, userId)
-        .query(`INSERT INTO Customers (UserID) VALUES (@userId)`)
+        .query(`INSERT INTO Customers (UserID) VALUES (@userId) SELECT SCOPE_IDENTITY() as insert_row`)
 
-    console.log("createCustomerRow")
-    console.log(result);
-
-
-    return 3;
+    return result['recordset']?.[0]?.insert_row;
 };
 
 const createUserRow = async ({ lastname, firstname, email, password }: Person): Promise<number> => {
@@ -56,12 +52,9 @@ const createUserRow = async ({ lastname, firstname, email, password }: Person): 
         .input('lastname', VarChar, lastname)
         .input('email', VarChar, email)
         .input('password', VarChar, password)
-        .query(`INSERT INTO Users (FirstName, LastName, Email, Password) VALUES (@firstname,@lastname,@email,@password)`)
+        .query(`INSERT INTO Users (FirstName, LastName, Email, Password) VALUES (@firstname,@lastname,@email,@password); SELECT SCOPE_IDENTITY() as insert_row`)
 
-    console.log("createUserRow")
-    console.log(result);
-
-    return 1;
+    return result['recordset']?.[0]?.insert_row;
 };
 
 

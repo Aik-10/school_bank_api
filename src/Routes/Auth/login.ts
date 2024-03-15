@@ -1,5 +1,3 @@
-import jwt from 'jsonwebtoken'
-
 import Person, { PersonLogin } from '../../Models/DataModels/Person';
 
 import { getPoolConnection } from '../../Handler/Database'
@@ -7,6 +5,7 @@ import { PasswordManager } from '../../Controllers/PasswordManager'
 import { VarChar } from 'mssql'
 
 import { HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
+import { LoginController } from '../../Controllers/LoginController';
 
 export const AuthLoginRoute = async (request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> => {
     try {
@@ -31,10 +30,15 @@ export const AuthLoginRoute = async (request: HttpRequest, context: InvocationCo
         }
 
         const personId = await getPersonIdEmail(user);
+        if (!personId) {
+            return {
+                status: 400,
+                body: "Invalid params",
+            }
+        }
 
-        const token = await jwt.sign(
-            { _id: personId, email: user.email }, process.env.API_JWT_TOKEN, { expiresIn: "30min" }
-        );
+        const tokenManager = new LoginController(personId);
+        const token = await tokenManager.getToken();
 
         console.log("New login with data", {
             user: personId,
@@ -46,7 +50,7 @@ export const AuthLoginRoute = async (request: HttpRequest, context: InvocationCo
             jsonBody: {
                 success: true,
                 message: "Login success",
-                token: token,
+                data: token,
             }
         }
     } catch (err: any) {
@@ -63,8 +67,8 @@ const getPersonPasswordHashByEmail = async ({ email }: PersonLogin | Person): Pr
 
     const result = await poolConnection
         .input('email', VarChar, email)
-        .query(`SELECT password FROM person WHERE email = @email`);
-    return result['recordset']?.[0]?.password ?? undefined;
+        .query(`SELECT Password FROM Users WHERE Email = @email`);
+    return result['recordset']?.[0]?.Password ?? undefined;
 }
 
 const getPersonIdEmail = async ({ email }: PersonLogin | Person): Promise<number | undefined> => {
@@ -72,6 +76,6 @@ const getPersonIdEmail = async ({ email }: PersonLogin | Person): Promise<number
 
     const result = await poolConnection
         .input('email', VarChar, email)
-        .query(`SELECT personID FROM person WHERE email = @email`);
-    return result['recordset']?.[0]?.personID ?? undefined;
+        .query(`SELECT UserID FROM Users WHERE Email = @email`);
+    return result['recordset']?.[0]?.UserID ?? undefined;
 }
