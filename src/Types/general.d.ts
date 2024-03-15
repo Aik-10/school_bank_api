@@ -8,6 +8,7 @@ interface UserCreateProps {
     password: string
 }
 
+type CardRFID = string
 
 type HealthRouteResponse = {
     uptime: number
@@ -29,5 +30,17 @@ interface CreateCustomerRowProps {
 
 
 interface CreatePerson {
-    lastname: string, firstname: string, email: string, customerId: number
+    lastname: string, firstname: string, email: string, customerId: number, userId: number
+}
+
+interface GetJWTProps {
+    userId: number, customerId: number, cardType?: string, email: string
+}
+
+interface UserResult {
+    UserID: number
+    FirstName: string
+    LastName: string
+    Email: string
+    CustomerID: number
 }

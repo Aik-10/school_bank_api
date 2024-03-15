@@ -1,10 +1,10 @@
 import { app } from "@azure/functions";
-import { AuthLoginRoute } from "../../Routes/Auth/login";
+import { AuthCardCheckRoute } from "../../Routes/Auth/Cards/check";
 
-app.http('auth-login', {
-    route: "auth/login",
-    methods: ['POST'],
+app.http('auth-card-check', {
+    route: "auth/cards",
+    methods: ['GET'],
     authLevel: 'anonymous',
-    handler: AuthLoginRoute
+    handler: AuthCardCheckRoute
 });
 

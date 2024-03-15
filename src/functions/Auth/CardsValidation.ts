@@ -1,10 +1,10 @@
 import { app } from "@azure/functions";
-import { AuthLoginRoute } from "../../Routes/Auth/login";
+import { AuthCardValidateRoute } from "../../Routes/Auth/Cards/validate";
 
-app.http('auth-login', {
-    route: "auth/login",
+app.http('auth-card-validate', {
+    route: "auth/cards/validate",
     methods: ['POST'],
     authLevel: 'anonymous',
-    handler: AuthLoginRoute
+    handler: AuthCardValidateRoute
 });
 

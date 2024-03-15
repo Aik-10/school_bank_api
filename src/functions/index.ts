@@ -2,6 +2,8 @@
 import './Auth/httpTriggerLogin'
 import './Auth/httpTriggerRegistert'
 import './Auth/httpTriggerTest'
+import './Auth/CardsCheck'
+import './Auth/CardsValidation'
 
 // User
 import './User/httpTriggerUserInformation'
