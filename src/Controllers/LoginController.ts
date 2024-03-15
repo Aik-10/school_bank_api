@@ -29,7 +29,8 @@ export class LoginController {
 
         return {
             token,
-            cardType: cardData ?? null
+            cardType: cardData ?? null,
+            fullName: `${userData.FirstName} ${userData.LastName}`
         };
     }
 
