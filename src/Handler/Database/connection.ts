@@ -11,7 +11,7 @@ export async function waitForConnection() {
     }
 }
 
-const activeConnections: Record<string, any> = {}; // Use 'any' type for the connection object
+const activeConnections: Record<string, any> = {}; 
 
 export async function createConnectionPool() {
     try {

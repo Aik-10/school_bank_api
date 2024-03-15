@@ -32,13 +32,13 @@ export const AuthRegisterRoute = async (request: HttpRequest): Promise<HttpRespo
         person.password = passHash;
         const poolConnection = await getPoolConnection();
 
-        const result = await poolConnection
+       /*  const result = await poolConnection
             .input('firstname', sql.VarChar, person.firstname)
             .input('lastname', sql.VarChar, person.lastname)
             .input('address', sql.VarChar, person.address)
             .input('email', sql.VarChar, person.email)
             .input('password', sql.VarChar, person.password)
-            .query(`INSERT INTO person (firstname ,lastname ,address ,email ,password) VALUES (@firstname,@lastname,@address,@email,@password)`)
+            .query(`INSERT INTO person (firstname ,lastname ,address ,email ,password) VALUES (@firstname,@lastname,@address,@email,@password)`) */
 
         console.log("New person register", person)
 

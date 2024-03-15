@@ -23,11 +23,11 @@ type AuthToken = {
     exp: number
 }
 
-declare namespace Express {
-    export interface Request {
-        user: any;
-    }
-    export interface Response {
-        user: any;
-    }
+interface CreateCustomerRowProps {
+    userId: number
+}
+
+
+interface CreatePerson {
+    lastname: string, firstname: string, email: string, customerId: number
 }
