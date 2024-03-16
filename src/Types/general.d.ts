@@ -9,6 +9,7 @@ interface UserCreateProps {
 }
 
 type CardRFID = string
+type CardId = number
 
 type HealthRouteResponse = {
     uptime: number

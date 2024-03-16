@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 export class PasswordManager {
 
     private readonly passwordString: string;
-    private saltRounds: number = 10;
+    private readonly saltRounds: number = 10;
 
     constructor(passwordString?: string) {
         if (passwordString) {
