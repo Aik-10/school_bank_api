@@ -15,9 +15,6 @@ const activeConnections: Record<string, any> = {};
 
 export async function createConnectionPool() {
     try {
-        console.log("Creating POOL connection");
-        console.log("data", process.env.DB_AUTH);
-
         pool = await new sql.ConnectionPool(process.env.DB_AUTH).connect();
 
         pool.on('error', err => {
