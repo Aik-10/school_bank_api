@@ -2,6 +2,9 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import { Authenticate } from "../../Routes/Middlewares/Auth";
 
 async function AuthTest(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+    
+    console.log(JSON.stringify(process.env))
+    
     const auth = await Authenticate(request, context);
     if (auth?.status !== true) return auth;
 
