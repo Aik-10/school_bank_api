@@ -45,3 +45,12 @@ interface UserResult {
     Email: string
     CustomerID: number
 }
+interface UserAccountAction {
+    accountId: number;
+    amount: number;
+}
+
+interface TransactionHistoryProps extends UserAccountAction {
+    type: string;
+    target: string;
+}
