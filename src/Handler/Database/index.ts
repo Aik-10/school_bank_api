@@ -10,6 +10,3 @@ setTimeout(async () => {
 });
 
 export * from './connection';
-/* export * from './rawQuery';
-export * from './rawExecute';
-export * from './rawTransaction'; */
