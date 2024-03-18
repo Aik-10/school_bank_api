@@ -3,20 +3,19 @@ import { Authenticate } from "../../Routes/Middlewares/Auth";
 import { PersonModel } from "../../Models/PersonModel";
 
 async function UserInformation(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    const auth = await Authenticate(request, context);
-    if (auth?.status !== true) return auth;
-    
-    const { user }: { status: true, user: AuthToken } = auth;
+    try {
+        const auth = await Authenticate(request, context);
+        if (auth?.status !== true) return auth;
 
-    console.log(user?._id)
+        const { user }: { status: true, user: AuthToken } = auth;
 
-    console.log(user?._id)
+        const person = new PersonModel(user._id);
+        await person.getPersonData();
 
-    const person = new PersonModel(user?._id);
-    
-    console.log(person.personData)
-
-    return { jsonBody: auth };
+        return { status: 200, jsonBody: { lastname: person.personData.LastName, firstname: person.personData.FirstName, email: person.personData.Email } };
+    } catch (err: any) {
+        return { status: 500, body: JSON.stringify({ error: err.message }) };
+    }
 };
 
 app.http('user-information', {
