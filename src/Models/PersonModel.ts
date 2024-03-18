@@ -4,7 +4,8 @@ import { Int } from 'mssql'
 
 export class PersonModel {
 
-    private _personData: Person;
+    protected userId: number;
+    protected _personData: Person;
 
     public get personData(): Person {
         return this._personData;
@@ -16,30 +17,21 @@ export class PersonModel {
 
     constructor(personId?: number) {
         if (personId) {
-            console.log(personId)
-            // this._personData.personID = personId;
-            this.getPersonData();
+            this.userId = personId;
         }
     }
 
-    private async getPersonData(): Promise<void> {
-        const id = this._personData.personID;
-
+    public async getPersonData(): Promise<void> {
+        const id = this.userId;
         const poolConnection = await getPoolConnection();
 
         const result = await poolConnection
-            .input('id', Int, 1)
-            .query(`SELECT * FROM person WHERE id = @id`);
+            .input('userId', Int, id)
+            .query(`SELECT u.UserID, u.Email, u.FirstName, u.LastName, c.CustomerID FROM Users u
+                INNER JOIN Customers c ON c.UserID = u.UserID
+            WHERE u.UserID = @userId`);
 
-        // if (!result['recordset']?.[0]) {
-        //     console.log("Cannot get person by id: ", id);
-        //     return;
-        // }
-
-        console.log(result['recordset'])
-
-        // this._personData = result['recordset']?.[0];
-
+        this._personData = result['recordset']?.[0];
     }
 
 }
