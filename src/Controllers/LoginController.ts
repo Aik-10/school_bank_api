@@ -25,11 +25,19 @@ export class LoginController {
         }
 
         const cardData = await this.getCardDetails();
-        const token = await this.getJWT({ userId: this.userId, email: userData.Email, customerId: userData.CustomerID, cardType: cardData ?? null });
+        const token = await this.getJWT({ UserID: this.userId, Email: userData.Email, CustomerID: userData.CustomerID, CardType: cardData?.label ?? null });
+
+        if (!cardData) {
+            return {
+                token,
+                fullName: `${userData.FirstName} ${userData.LastName}`
+            };
+        }
 
         return {
             token,
-            cardType: cardData ?? null,
+            cardType: cardData.label ?? null,
+            cardData: cardData.rows ?? null,
             fullName: `${userData.FirstName} ${userData.LastName}`
         };
     }
@@ -45,14 +53,14 @@ export class LoginController {
         return result['recordset']?.[0] ?? undefined;
     }
 
-    private async getCardDetails(): Promise<string> {
+    private async getCardDetails(): Promise<GetCardDetails> {
         const poolConnection = await getPoolConnection();
 
         const result = await poolConnection
             .input('cardID', VarChar, this.cardId)
-            .query(`SELECT c.CardType FROM PhysicalCards pc
+            .query(`SELECT TOP(2) c.CardType, c.CardID FROM PhysicalCards pc
                     INNER JOIN Cards c ON c.PhysicalCardID = pc.PhysicalCardID
-                WHERE pc.PhysicalCardID = @cardID GROUP BY CardType`);
+                WHERE pc.PhysicalCardID = @cardID`);
 
         const str = result['recordset']?.sort((a, b) => {
             if (a.CardType === 'credit') return -1;
@@ -62,13 +70,17 @@ export class LoginController {
             ?.map(card => card.CardType)
             ?.join(' & ');
 
-        return str ?? undefined;
+        return { label: str, rows: result['recordset'] };
     }
 
-    private async getJWT({ userId, customerId, cardType, email }: GetJWTProps): Promise<string> {
+    private async getJWT({ UserID, CustomerID, CardType, Email }: GetJWTProps): Promise<string> {
         return await jwt.sign(
-            { _id: userId, _customerId: customerId, type: cardType, email: email }, process.env.API_JWT_TOKEN, { expiresIn: "30min" }
+            { _id: UserID, _customerId: CustomerID, type: CardType ?? null, email: Email }, process.env.API_JWT_TOKEN, { expiresIn: "30min" }
         );
     }
 }
 
+interface GetCardDetails {
+    label: string
+    rows: Array<{ CardType: string, CardID: number }>
+}
