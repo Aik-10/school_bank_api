@@ -1,10 +1,10 @@
 export default interface Person {
-    personID?: number,
-    lastname: string,
-    firstname: string,
-    email: string,
-    password: string,
-    created_at?: Date,
+    UserID?: number,
+    LastName: string,
+    FirstName: string,
+    Email: string,
+    Password: string,
+    CustomerID?: number,
 }
 
 type CategoryRemoveKeys =  'personID' |  'lastname' |  'firstname' |  'dateOfBirth' |  'address' |  'created_at';

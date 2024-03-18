@@ -1,26 +1,16 @@
-
-interface UserCreateProps {
-    firstname: string,
-    lastname: string,
-    dob: Date,
-    address: string,
-    email: string,
-    password: string
-}
-
 type CardRFID = string
 type CardId = number
 
-type HealthRouteResponse = {
-    uptime: number
-    message: 'OK' | string
-    date: Date
+interface UserCreateProps {
+    FirstName: string,
+    LastName: string,
+    Email: string,
+    Password: string
 }
-
 
 type AuthToken = {
     _id: number,
-    email: string,
+    Email: string,
     iat: number,
     exp: number
 }
@@ -29,13 +19,12 @@ interface CreateCustomerRowProps {
     userId: number
 }
 
-
 interface CreatePerson {
-    lastname: string, firstname: string, email: string, customerId: number, userId: number
+    LastName: string, FirstName: string, Email: string, CustomerID: number, UserID: number
 }
 
 interface GetJWTProps {
-    userId: number, customerId: number, cardType?: string, email: string
+    UserID: number, CustomerID: number, CardType?: string, Email: string
 }
 
 interface UserResult {
@@ -53,4 +42,31 @@ interface UserAccountAction {
 interface TransactionHistoryProps extends UserAccountAction {
     type: string;
     target: string;
+}
+
+interface AccountModel {
+    AccountID: number;
+    AccountNumber: string;
+    CustomerID: number;
+    Balance: number;
+    CreditLimit: number;
+}
+
+interface CardModel {
+    CardID: number
+    PhysicalCardID: number
+    CardType: string
+    CardNumber: string
+    ExpiryDate: Date
+    AccountID: number
+}
+
+interface TransactionHistory {
+    TransactionID: number
+    AccountID: number
+    TransactionTarget: string
+    TransactionData: string
+    TransactionType: string
+    Amount: number
+    TransactionDate: Date
 }

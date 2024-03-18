@@ -19,7 +19,7 @@ export const AuthLoginRoute = async (request: HttpRequest, context: InvocationCo
             }
         }
 
-        const passManager = new PasswordManager(user.password);
+        const passManager = new PasswordManager(user.Password);
         const isPassCompare = await passManager.comparePasswordHash(passwordHash);
 
         if (!isPassCompare) {
@@ -42,7 +42,7 @@ export const AuthLoginRoute = async (request: HttpRequest, context: InvocationCo
 
         console.log("New login with data", {
             user: personId,
-            email: user.email
+            email: user.Email
         });
 
         return {
@@ -62,20 +62,20 @@ export const AuthLoginRoute = async (request: HttpRequest, context: InvocationCo
     }
 };
 
-const getPersonPasswordHashByEmail = async ({ email }: PersonLogin | Person): Promise<string | undefined> => {
+const getPersonPasswordHashByEmail = async ({ Email }: PersonLogin | Person): Promise<string | undefined> => {
     const poolConnection = await getPoolConnection();
 
     const result = await poolConnection
-        .input('email', VarChar, email)
+        .input('email', VarChar, Email)
         .query(`SELECT Password FROM Users WHERE Email = @email`);
     return result['recordset']?.[0]?.Password ?? undefined;
 }
 
-const getPersonIdEmail = async ({ email }: PersonLogin | Person): Promise<number | undefined> => {
+const getPersonIdEmail = async ({ Email }: PersonLogin | Person): Promise<number | undefined> => {
     const poolConnection = await getPoolConnection();
 
     const result = await poolConnection
-        .input('email', VarChar, email)
+        .input('email', VarChar, Email)
         .query(`SELECT UserID FROM Users WHERE Email = @email`);
     return result['recordset']?.[0]?.UserID ?? undefined;
 }

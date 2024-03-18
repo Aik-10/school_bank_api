@@ -23,10 +23,10 @@ export const AuthRegisterRoute = async (request: HttpRequest): Promise<HttpRespo
     }
 };
 
-const getPersonEmailAmount = async ({ email }: Person): Promise<number> => {
+const getPersonEmailAmount = async ({ Email }: Person): Promise<number> => {
     const poolConnection = await getPoolConnection();
     const result = await poolConnection
-        .input('email', sql.VarChar, email)
+        .input('email', sql.VarChar, Email)
         .query(`SELECT COUNT(email) as amount FROM person WHERE email = @email`);
 
     return result['recordset']?.[0]?.amount ?? 0;
