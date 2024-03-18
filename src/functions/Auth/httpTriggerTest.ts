@@ -1,10 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { Authenticate } from "../../Routes/Middlewares/Auth";
 
-async function AuthTest(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    
-    console.log(JSON.stringify(process.env))
-    
+async function AuthTest(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {    
     const auth = await Authenticate(request, context);
     if (auth?.status !== true) return auth;
 
