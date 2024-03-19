@@ -1,8 +1,14 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { CardController } from "../../Controllers/CardController";
+import { getAccountIdByCardId } from "./ActionRouter";
+import { LoadCreateController } from "../../Controllers/LoadController";
+import { Authenticate } from "../../Routes/Middlewares/Auth";
 
 async function UserInformation(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     try {
+        const auth = await Authenticate(request, context);
+        if (auth?.status !== true) return auth;
+
         const { id, action } = request.params as unknown as { id: number, action?: string };
         if (!id) {
             throw new Error("Invalid Card id");
@@ -13,8 +19,16 @@ async function UserInformation(request: HttpRequest, context: InvocationContext)
 
         const pageString = await request.query.get('page');
         const page = pageString ? parseFloat(pageString) : 0;
-
         const transactions = await cardModel.getAccountTransaction(page);
+
+
+        const accountId = await getAccountIdByCardId(id);
+        if (!accountId) {
+            throw new Error("Invalid account id");
+        }
+
+        const { LoanAmount, LoanPaymentAmount } = await LoadCreateController.getAccountCurrentCreditAmount(accountId);
+        const currentLoanAmount = (LoanAmount - LoanPaymentAmount);
 
         let result;
 
@@ -27,7 +41,8 @@ async function UserInformation(request: HttpRequest, context: InvocationContext)
                     cardType: await cardModel.getCardType(),
                     balance: await cardModel.getAccountBalance(),
                     creditLimit: await cardModel.getAccountCreditLimit(),
-                    transactions: await stripTransactionDetails(transactions)
+                    currentLoanAmount: currentLoanAmount ?? 0,
+                    transactions: await stripTransactionDetails(transactions),
                 }
         }
 

@@ -39,6 +39,14 @@ export class CardController {
         return this.cardModel.CardType;
     }
 
+    public async isCredit(): Promise<boolean> {
+        if (!this.cardModel) {
+            throw new Error("Cannot get balance, make sure that model is correctly builded.")
+        }
+
+        return (this.cardModel.CardType == "credit");
+    }
+
     private async getLinkedAccountData(): Promise<void> {
         const poolConnection = await getPoolConnection();
         const result = await poolConnection
@@ -64,8 +72,6 @@ export class CardController {
 
         const accountId = this.accountModel?.AccountID;
         const pageIndex = limit * page;
-
-        console.log("page", pageIndex)
 
         const result = await poolConnection
             .input('accountId', Int, accountId)
