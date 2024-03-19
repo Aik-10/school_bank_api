@@ -37,6 +37,7 @@ interface UserResult {
 interface UserAccountAction {
     accountId: number;
     amount: number;
+    cardId: number
 }
 
 interface TransactionHistoryProps extends UserAccountAction {
@@ -70,3 +71,18 @@ interface TransactionHistory {
     Amount: number
     TransactionDate: Date
 }
+
+interface GenerateLoanProps {
+    accountId: number, amount: number
+}
+
+interface GenerateLoan {
+    loadId: number, loadPaymentId: number
+}
+
+interface CreditAmount {
+    LoanAmount: number
+    LoanPaymentAmount: number
+}
+
+interface LoadModel { }
