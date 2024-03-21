@@ -1,7 +1,7 @@
 {
   "name": "school_bank_api",
   "version": "1.0.0",
-  "description": "This project is a school assignment developed using Node.js, and it is released under the Mozilla Public License 2.0 (MPL 2.0). The MPL 2.0 license allows for the free use, modification, and distribution of the software.",
+  "description": "This project is a school assignment developed using Node.js, and it is released under the GNU General Public License 3.0 (GNU 3.0).",
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
