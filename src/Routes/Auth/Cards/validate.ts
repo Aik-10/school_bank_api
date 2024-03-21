@@ -1,8 +1,9 @@
-import sql from 'mssql'
+import sql, { VarChar } from 'mssql'
 import { getPoolConnection } from '../../../Handler/Database'
 import { HttpRequest, HttpResponseInit } from "@azure/functions";
 import { PasswordManager } from '../../../Controllers/PasswordManager';
 import { LoginController } from '../../../Controllers/LoginController';
+import { getCardFailedLoginAmountById } from './check';
 
 export const AuthCardValidateRoute = async (request: HttpRequest): Promise<HttpResponseInit> => {
     try {
@@ -21,6 +22,13 @@ export const AuthCardValidateRoute = async (request: HttpRequest): Promise<HttpR
         const isMatch = await await passManager.comparePasswordHash(passwordHash);
 
         if (!isMatch) {
+            const loginTryCount = await getCardFailedLoginAmountById(id);
+            if (loginTryCount >= 3) {
+                throw new Error('account locked');
+            }
+
+            await CreateFailedLogin(id);
+
             throw new Error("Invalid pincode");
         }
 
@@ -65,3 +73,12 @@ const getCardCodeById = async (cardID: string): Promise<string> => {
 
     return result['recordset']?.[0]?.pass ?? null;
 }
+
+const CreateFailedLogin = async (cardNumber: string): Promise<number> => {
+    const poolConnection = await getPoolConnection();
+    const result = await poolConnection
+        .input('cardId', VarChar, cardNumber)
+        .query(`INSERT INTO CardLoginTimeout (PhysicalCardID) VALUES (@cardId) SELECT SCOPE_IDENTITY() as insert_row`)
+
+    return result['recordset']?.[0]?.insert_row;
+};

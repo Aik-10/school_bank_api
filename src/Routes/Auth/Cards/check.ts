@@ -8,7 +8,12 @@ export const AuthCardCheckRoute = async (request: HttpRequest): Promise<HttpResp
         if (!id ) {
             throw new Error('Invalid param!');
         }
+
         const amount = await getCardAmountById(id);
+        const loginTryCount = await getCardFailedLoginAmountById(id);
+        if (loginTryCount >= 3) {
+            throw new Error('Account is locked, contact admin to open it again!');
+        }
 
         return {
             status: 201,
@@ -17,8 +22,6 @@ export const AuthCardCheckRoute = async (request: HttpRequest): Promise<HttpResp
             }
         };
     } catch (error: any) {
-        console.error(error);
-
         return {
             status: 400,
             body: error.message.toString(),
@@ -31,6 +34,15 @@ const getCardAmountById = async (cardID: string): Promise<number> => {
     const result = await poolConnection
         .input('cardID', sql.VarChar, cardID)
         .query(`SELECT COUNT(PhysicalCardID) as amount FROM PhysicalCards WHERE PhysicalCardID = @cardID`);
+
+    return result['recordset']?.[0]?.amount ?? 0;
+}
+
+export const getCardFailedLoginAmountById = async (cardID: string): Promise<number> => {
+    const poolConnection = await getPoolConnection();
+    const result = await poolConnection
+        .input('cardID', sql.VarChar, cardID)
+        .query(`SELECT COUNT(PhysicalCardID) as amount FROM CardLoginTimeout WHERE PhysicalCardID = @cardID`);
 
     return result['recordset']?.[0]?.amount ?? 0;
 }
